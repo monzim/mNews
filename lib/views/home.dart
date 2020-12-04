@@ -1,8 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:m_news/helper/data.dart';
 import 'package:m_news/models/category_model.dart';
 import 'package:m_news/models/article_model.dart';
 import 'package:m_news/helper/news.dart';
+import 'package:m_news/models/wigets_blog.dart';
+import 'package:m_news/views/article_view.dart';
+import 'package:m_news/views/category_news.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -36,7 +40,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // color: Colors.amber,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +48,7 @@ class _HomeState extends State<Home> {
             Text('M'),
             Text(
               'News',
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(color: Colors.amber),
             ),
           ],
         ),
@@ -63,7 +67,7 @@ class _HomeState extends State<Home> {
                   children: [
                     // catagories
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      // padding: EdgeInsets.symmetric(horizontal: 0),
                       height: 70,
                       child: ListView.builder(
                           itemCount: categories.length,
@@ -79,18 +83,20 @@ class _HomeState extends State<Home> {
 
                     ///Blogs
                     Container(
+                      padding: EdgeInsets.only(top: 16),
                       child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: articles.length,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) {
-                          return BlogTile(
+                          itemCount: articles.length,
+                          shrinkWrap: true,
+                          physics: ClampingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return BlogTile(
                               imageUrl: articles[index].urlToImage,
                               title: articles[index].title,
-                              desc: articles[index].description);
-                        },
-                      ),
-                    )
+                              desc: articles[index].description,
+                              url: articles[index].url,
+                            );
+                          }),
+                    ),
                   ],
                 ),
               ),
@@ -99,8 +105,9 @@ class _HomeState extends State<Home> {
   }
 }
 
+//All Categories are here
 class CategoryTile extends StatelessWidget {
-  final imageUrl, categoryName;
+  final String imageUrl, categoryName;
   CategoryTile({
     Key key,
     this.imageUrl,
@@ -111,21 +118,29 @@ class CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('Clicked');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CategoryNews(
+                      category: categoryName.toLowerCase(),
+                    )));
       },
       child: Container(
         margin: EdgeInsets.only(right: 16),
         child: Stack(
           children: [
+            //category image is here
             ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 width: 120,
                 height: 60,
                 fit: BoxFit.cover,
               ),
             ),
+
+            //category opacity container
             Container(
               width: 120,
               height: 60,
@@ -134,6 +149,8 @@ class CategoryTile extends StatelessWidget {
                 color: Colors.black26,
                 borderRadius: BorderRadius.circular(6),
               ),
+
+              // category Title style
               child: Text(
                 categoryName,
                 style: TextStyle(
@@ -149,24 +166,71 @@ class CategoryTile extends StatelessWidget {
   }
 }
 
+// All Blogs are here
 class BlogTile extends StatelessWidget {
-  final String imageUrl, title, desc;
+  final String imageUrl, title, desc, url;
 
   BlogTile({
     @required this.imageUrl,
     @required this.title,
     @required this.desc,
+    @required this.url,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Image.network(imageUrl),
-          Text(title),
-          Text(desc),
-        ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ArticleView(
+                    blogUrl: url,
+                  )),
+        );
+      },
+      child: Container(
+        decoration: boxDecorationForBlog(),
+        // padding: EdgeInsets.all(10),
+        padding: EdgeInsets.only(bottom: 10, left: 5, right: 5, top: 5),
+        margin: EdgeInsets.only(bottom: 16),
+        child: Column(
+          children: [
+            // Blogs Title is here
+            Container(
+              padding: EdgeInsets.only(left: 3, right: 5),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+
+            SizedBox(height: 8),
+
+            // Blogs Image is here
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(imageUrl),
+            ),
+            SizedBox(height: 9),
+
+            // Blogs Description is here
+            Container(
+              padding: EdgeInsets.only(left: 5, right: 5),
+              child: Text(
+                desc,
+                style: TextStyle(
+                  fontSize: 17,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
