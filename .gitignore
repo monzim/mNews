@@ -28,6 +28,7 @@
 .flutter-plugins-dependencies
 .packages
 .pub-cache/
+.lib/helper/.data.dart
 .pub/
 /build/
 
