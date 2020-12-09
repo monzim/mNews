@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('M'),
+            Text('Mτ'),
             Text(
               'News',
               style: TextStyle(color: Colors.amber),

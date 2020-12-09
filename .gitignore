@@ -1,3 +1,5 @@
+lib/helper/data.dart
+
 # Miscellaneous
 *.class
 *.log
@@ -28,7 +30,6 @@
 .flutter-plugins-dependencies
 .packages
 .pub-cache/
-.lib/helper/.data.dart
 .pub/
 /build/
 
